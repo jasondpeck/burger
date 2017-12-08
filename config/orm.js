@@ -1,83 +1,81 @@
-// Import MySQL connection.
-var connection = require("../config/connection.js");
+// import in the connection to the database
+var connection = require('../config/connection.js');
 
-// Helper function for SQL syntax.
+// a function that will be used to build queries
 function printQuestionMarks(num) {
   var arr = [];
 
   for (var i = 0; i < num; i++) {
-    arr.push("?");
+    arr.push('?');
   }
 
   return arr.toString();
 }
 
-// Helper function for SQL syntax.
+// another function for building queries
 function objToSql(ob) {
   var arr = [];
 
   for (var key in ob) {
-    if (Object.hasOwnProperty.call(ob, key)) {
-      arr.push(key + "=" + ob[key]);
+    if (ob.hasOwnProperty(key)) {
+      arr.push(key + '=' + ob[key]);
     }
   }
 
   return arr.toString();
 }
 
-// Object for all our SQL statement functions.
+// define our orm that will be exported to the burgers.js model
 var orm = {
-
-  // Select all items in database table.
+  // selectAll function for grabbing everything from the table
   selectAll: function(tableInput, cb) {
-    var queryString = "SELECT * FROM " + tableInput + ";";
+    var queryString = 'SELECT * FROM ' + tableInput + ';';
     connection.query(queryString, function(err, result) {
-      if (err) {
-        throw err;
-      }
+      if (err) throw err;
+      // send the query result back to the callback function
       cb(result);
     });
   },
-
-  // Insert one item into database table.
+  // insertOne function for inserting one burger into table
   insertOne: function(table, cols, vals, cb) {
-    var queryString = "INSERT INTO " + table;
+    var queryString = 'INSERT INTO ' + table;
 
-    queryString += " (";
+    queryString += ' (';
     queryString += cols.toString();
-    queryString += ") ";
-    queryString += "VALUES (";
+    queryString += ') ';
+    queryString += 'VALUES (';
+    // queryString += vals[0] + ' , ' + vals[1];
     queryString += printQuestionMarks(vals.length);
-    queryString += ") ";
+    queryString += ') ';
 
     console.log(queryString);
+    console.log(vals);
 
     connection.query(queryString, vals, function(err, result) {
-      if (err) {
-        throw err;
-      }
-
+      if (err) throw err;
+      // send the query result back to the callback function
       cb(result);
     });
   },
-  // Update existing item in database table.
-  updateOne: function(table, objColVals, condition, cb) {
-    var queryString = "UPDATE " + table;
 
-    queryString += " SET ";
+  // update one function for changing a burger status
+  updateOne: function(table, objColVals, condition, cb) {
+    var queryString = 'UPDATE ' + table;
+
+    queryString += ' SET ';
     queryString += objToSql(objColVals);
-    queryString += " WHERE ";
+    queryString += ' WHERE ';
     queryString += condition;
 
     console.log(queryString);
+
     connection.query(queryString, function(err, result) {
-      if (err) {
-        throw err;
-      }
+      if (err) throw err;
+      // send the query result back to the callback function
       cb(result);
     });
   }
 };
 
-// Export the orm object for the model (burger.js).
+// export the orm back to the model burger.js
 module.exports = orm;
