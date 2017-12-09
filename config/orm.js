@@ -1,7 +1,7 @@
-// import in the connection to the database
+//requiring connection
 var connection = require('../config/connection.js');
 
-// a function that will be used to build queries
+//question marks in array for SQL
 function printQuestionMarks(num) {
   var arr = [];
 
@@ -12,7 +12,7 @@ function printQuestionMarks(num) {
   return arr.toString();
 }
 
-// another function for building queries
+//function for converting objects to SQL syntax
 function objToSql(ob) {
   var arr = [];
 
@@ -25,26 +25,25 @@ function objToSql(ob) {
   return arr.toString();
 }
 
-// define our orm that will be exported to the burgers.js model
+//orm to be exported to burgers.js model
 var orm = {
-  // selectAll function for grabbing everything from the table
+  
+//function select all burgers from table
   selectAll: function(tableInput, cb) {
     var queryString = 'SELECT * FROM ' + tableInput + ';';
     connection.query(queryString, function(err, result) {
       if (err) throw err;
-      // send the query result back to the callback function
       cb(result);
     });
   },
-  // insertOne function for inserting one burger into table
-  insertOne: function(table, cols, vals, cb) {
+//function for adding a burger into the table
+  addBurger: function(table, cols, vals, cb) {
     var queryString = 'INSERT INTO ' + table;
 
     queryString += ' (';
     queryString += cols.toString();
     queryString += ') ';
     queryString += 'VALUES (';
-    // queryString += vals[0] + ' , ' + vals[1];
     queryString += printQuestionMarks(vals.length);
     queryString += ') ';
 
@@ -53,13 +52,12 @@ var orm = {
 
     connection.query(queryString, vals, function(err, result) {
       if (err) throw err;
-      // send the query result back to the callback function
       cb(result);
     });
   },
 
-  // update one function for changing a burger status
-  updateOne: function(table, objColVals, condition, cb) {
+  //function for devouring a burger
+  devourBurger: function(table, objColVals, condition, cb) {
     var queryString = 'UPDATE ' + table;
 
     queryString += ' SET ';
@@ -71,11 +69,10 @@ var orm = {
 
     connection.query(queryString, function(err, result) {
       if (err) throw err;
-      // send the query result back to the callback function
       cb(result);
     });
   }
 };
 
-// export the orm back to the model burger.js
+//export for burger.js
 module.exports = orm;

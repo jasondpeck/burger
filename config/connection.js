@@ -1,8 +1,8 @@
-// Set up database connection
+//connection to mysql
 var mysql = require('mysql');
 var connection;
 
-// add in the environment variable option for JAWSDB for heroku
+//jawsdb for heroku / local option
 if (process.env.JAWSDB_URL) {
   connection = mysql.createConnection(process.env.JAWSDB_URL);
 } else {
@@ -21,5 +21,5 @@ connection.connect(function(err) {
   console.log('connected as id ' + connection.threadId);
 });
 
-// export the connection back to orm
+//export for orm
 module.exports = connection;
